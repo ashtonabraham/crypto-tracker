@@ -535,7 +535,7 @@ export default function Home() {
         <div className="relative flex bg-bg-secondary border border-border rounded-lg p-1 mb-8 w-fit">
           {/* Sliding indicator */}
           <div
-            className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-150 ease-out"
+            className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-400 ease-out"
             style={{
               left: indicatorStyle.left,
               width: indicatorStyle.width,
@@ -544,7 +544,7 @@ export default function Home() {
           <button
             ref={watchlistBtnRef}
             onClick={() => handleViewModeChange("watchlist")}
-            className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 flex items-center gap-2 ${
+            className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-400 flex items-center gap-2 ${
               viewMode === "watchlist" ? "text-white" : "text-gray-500 hover:text-white"
             }`}
           >
@@ -556,7 +556,7 @@ export default function Home() {
           <button
             ref={singleBtnRef}
             onClick={() => handleViewModeChange("single")}
-            className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 flex items-center gap-2 ${
+            className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-400 flex items-center gap-2 ${
               viewMode === "single" ? "text-white" : "text-gray-500 hover:text-white"
             }`}
           >
@@ -788,7 +788,7 @@ export default function Home() {
                 <div className="relative flex bg-bg-secondary border border-border rounded-lg p-1">
                   {/* Sliding indicator */}
                   <div
-                    className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-150 ease-out"
+                    className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-400 ease-out"
                     style={{
                       left: timeIndicatorStyle.left,
                       width: timeIndicatorStyle.width,
@@ -797,7 +797,7 @@ export default function Home() {
                   <button
                     ref={btn24hRef}
                     onClick={() => handleTimeRangeChange(1)}
-                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-400 ${
                       timeRange === 1 ? "text-white" : "text-gray-500 hover:text-white"
                     }`}
                   >
@@ -806,7 +806,7 @@ export default function Home() {
                   <button
                     ref={btn7dRef}
                     onClick={() => handleTimeRangeChange(7)}
-                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-400 ${
                       timeRange === 7 ? "text-white" : "text-gray-500 hover:text-white"
                     }`}
                   >
