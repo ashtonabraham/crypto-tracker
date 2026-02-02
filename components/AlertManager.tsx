@@ -108,7 +108,7 @@ export default function AlertManager({ coins, selectedCoin, currentPrices }: Ale
       {/* Alert Bell Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="relative flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all duration-300 hover:bg-accent-blue hover:border-accent-blue"
+        className="relative flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all duration-400 hover:bg-accent-blue hover:border-accent-blue"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -262,7 +262,7 @@ export default function AlertManager({ coins, selectedCoin, currentPrices }: Ale
               ) : (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="w-full mb-5 py-3 border-2 border-dashed border-border rounded-xl text-sm text-gray-400 hover:text-white hover:border-gray-600 transition-all duration-300 flex items-center justify-center gap-2"
+                  className="w-full mb-5 py-3 border-2 border-dashed border-border rounded-xl text-sm text-gray-400 hover:text-white hover:border-gray-600 transition-all duration-400 flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

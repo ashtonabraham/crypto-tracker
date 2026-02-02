@@ -78,7 +78,7 @@ export default function FearGreedIndex() {
       {/* Main Button */}
       <button
         onClick={() => setShowTooltip(!showTooltip)}
-        className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary border border-border rounded-lg transition-all duration-300 hover:border-gray-600"
+        className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary border border-border rounded-lg transition-all duration-400 hover:border-gray-600"
       >
         {/* Mini Gauge */}
         <div className="relative w-8 h-5">
