@@ -1,16 +1,31 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createChart, IChartApi, ISeriesApi, CandlestickData, Time, ColorType } from "lightweight-charts";
 
 interface ChartProps {
   data: CandlestickData<Time>[];
 }
 
+interface TooltipData {
+  price: string;
+  time: string;
+  x: number;
+  y: number;
+  visible: boolean;
+}
+
 export default function Chart({ data }: ChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const [tooltip, setTooltip] = useState<TooltipData>({
+    price: "",
+    time: "",
+    x: 0,
+    y: 0,
+    visible: false,
+  });
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -30,12 +45,14 @@ export default function Chart({ data }: ChartProps) {
         vertLine: {
           color: "#3b82f6",
           width: 1,
-          style: 2, // Dashed
+          style: 2,
+          labelVisible: false,
         },
         horzLine: {
           color: "#3b82f6",
           width: 1,
           style: 2,
+          labelVisible: false,
         },
       },
       rightPriceScale: {
@@ -43,8 +60,7 @@ export default function Chart({ data }: ChartProps) {
       },
       timeScale: {
         borderColor: "#222222",
-        timeVisible: true,
-        secondsVisible: false,
+        visible: false,
       },
       handleScroll: {
         vertTouchDrag: false,
@@ -62,6 +78,41 @@ export default function Chart({ data }: ChartProps) {
 
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
+
+    // Subscribe to crosshair move for tooltip
+    chart.subscribeCrosshairMove((param) => {
+      if (!param.point || !param.time || !seriesRef.current) {
+        setTooltip((prev) => ({ ...prev, visible: false }));
+        return;
+      }
+
+      const data = param.seriesData.get(seriesRef.current) as CandlestickData<Time> | undefined;
+      if (!data) {
+        setTooltip((prev) => ({ ...prev, visible: false }));
+        return;
+      }
+
+      const price = "$" + data.close.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      const date = new Date((param.time as number) * 1000);
+      const timeStr = date.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      setTooltip({
+        price,
+        time: timeStr,
+        x: param.point.x,
+        y: param.point.y,
+        visible: true,
+      });
+    });
 
     // Handle resize
     const handleResize = () => {
@@ -90,5 +141,20 @@ export default function Chart({ data }: ChartProps) {
     }
   }, [data]);
 
-  return <div ref={chartContainerRef} className="w-full h-full" />;
+  return (
+    <div ref={chartContainerRef} className="w-full h-full relative">
+      {tooltip.visible && (
+        <div
+          className="absolute pointer-events-none bg-bg-tertiary border border-border rounded-lg px-3 py-2 text-sm z-10 shadow-lg"
+          style={{
+            left: tooltip.x + 15,
+            top: tooltip.y - 40,
+          }}
+        >
+          <div className="font-mono font-semibold text-white">{tooltip.price}</div>
+          <div className="text-gray-500 text-xs">{tooltip.time}</div>
+        </div>
+      )}
+    </div>
+  );
 }
