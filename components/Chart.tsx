@@ -13,6 +13,7 @@ interface TooltipData {
   x: number;
   y: number;
   visible: boolean;
+  isUp: boolean;
 }
 
 export default function Chart({ data }: ChartProps) {
@@ -25,6 +26,7 @@ export default function Chart({ data }: ChartProps) {
     x: 0,
     y: 0,
     visible: false,
+    isUp: true,
   });
 
   useEffect(() => {
@@ -105,12 +107,15 @@ export default function Chart({ data }: ChartProps) {
         minute: "2-digit",
       });
 
+      const isUp = data.close >= data.open;
+
       setTooltip({
         price,
         time: timeStr,
         x: param.point.x,
         y: param.point.y,
         visible: true,
+        isUp,
       });
     });
 
@@ -145,14 +150,20 @@ export default function Chart({ data }: ChartProps) {
     <div ref={chartContainerRef} className="w-full h-full relative">
       {tooltip.visible && (
         <div
-          className="absolute pointer-events-none bg-bg-tertiary border border-border rounded-lg px-3 py-2 text-sm z-10 shadow-lg"
+          className={`absolute pointer-events-none rounded-lg px-3 py-2 text-sm z-10 shadow-lg border ${
+            tooltip.isUp 
+              ? "bg-green-500/20 border-green-500/30" 
+              : "bg-red-500/20 border-red-500/30"
+          }`}
           style={{
             left: tooltip.x + 15,
             top: tooltip.y - 40,
           }}
         >
-          <div className="font-mono font-semibold text-white">{tooltip.price}</div>
-          <div className="text-gray-500 text-xs">{tooltip.time}</div>
+          <div className={`font-mono font-semibold ${tooltip.isUp ? "text-green-400" : "text-red-400"}`}>
+            {tooltip.price}
+          </div>
+          <div className="text-gray-400 text-xs">{tooltip.time}</div>
         </div>
       )}
     </div>
