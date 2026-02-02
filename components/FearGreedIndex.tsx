@@ -198,7 +198,7 @@ export default function FearGreedIndex() {
                   <circle cx="50" cy="50" r="4" fill={color} />
                   {/* Labels */}
                   <text x="10" y="64" fontSize="7" fill="white" textAnchor="middle">0</text>
-                  <text x="50" y="20" fontSize="7" fill="white" textAnchor="middle">50</text>
+                  <text x="50" y="23" fontSize="7" fill="white" textAnchor="middle">50</text>
                   <text x="90" y="64" fontSize="7" fill="white" textAnchor="middle">100</text>
                 </svg>
               </div>
