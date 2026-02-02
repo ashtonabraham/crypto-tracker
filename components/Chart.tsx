@@ -150,20 +150,18 @@ export default function Chart({ data }: ChartProps) {
     <div ref={chartContainerRef} className="w-full h-full relative">
       {tooltip.visible && (
         <div
-          className={`absolute pointer-events-none rounded-lg px-3 py-2 text-sm z-10 shadow-lg border ${
+          className={`absolute pointer-events-none rounded-lg px-3 py-2 text-sm z-10 shadow-lg ${
             tooltip.isUp 
-              ? "bg-green-500/20 border-green-500/30" 
-              : "bg-red-500/20 border-red-500/30"
+              ? "bg-green-500" 
+              : "bg-red-500"
           }`}
           style={{
             left: tooltip.x + 15,
             top: tooltip.y - 40,
           }}
         >
-          <div className={`font-mono font-semibold ${tooltip.isUp ? "text-green-400" : "text-red-400"}`}>
-            {tooltip.price}
-          </div>
-          <div className="text-gray-400 text-xs">{tooltip.time}</div>
+          <div className="font-mono font-semibold text-black">{tooltip.price}</div>
+          <div className="text-black/70 text-xs">{tooltip.time}</div>
         </div>
       )}
     </div>
