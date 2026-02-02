@@ -83,6 +83,7 @@ export default function Home() {
   const [isStale, setIsStale] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hoveredCoin, setHoveredCoin] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [refreshCountdown, setRefreshCountdown] = useState(AUTO_REFRESH_MS / 1000);
@@ -743,36 +744,46 @@ export default function Home() {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl">
-                    {COINS.map((coin) => (
-                      <button
-                        key={coin.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCoinChange(coin);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all hover:bg-bg-tertiary ${
-                          coin.id === selectedCoin.id ? "bg-bg-tertiary" : ""
-                        }`}
-                      >
-                        <div
-                          className={`w-7 h-7 bg-gradient-to-br ${coin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
+                  <div 
+                    className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl"
+                    onMouseLeave={() => setHoveredCoin(null)}
+                  >
+                    {COINS.map((coin) => {
+                      const isHovered = hoveredCoin === coin.id;
+                      const isSelected = coin.id === selectedCoin.id;
+                      const showBackground = hoveredCoin ? isHovered : isSelected;
+                      
+                      return (
+                        <button
+                          key={coin.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCoinChange(coin);
+                          }}
+                          onMouseEnter={() => setHoveredCoin(coin.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all ${
+                            showBackground ? "bg-bg-tertiary" : ""
+                          }`}
                         >
-                          {coin.icon}
-                        </div>
-                        <span className="font-medium">{coin.name}</span>
-                        <span className="text-gray-500 text-sm">{coin.symbol}</span>
-                        {coin.id === selectedCoin.id && (
-                          <svg className="w-5 h-5 text-accent-blue ml-auto" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    ))}
+                          <div
+                            className={`w-7 h-7 bg-gradient-to-br ${coin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
+                          >
+                            {coin.icon}
+                          </div>
+                          <span className="font-medium">{coin.name}</span>
+                          <span className="text-gray-500 text-sm">{coin.symbol}</span>
+                          {isSelected && (
+                            <svg className="w-5 h-5 text-accent-blue ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
