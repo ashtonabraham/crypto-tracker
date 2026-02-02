@@ -452,7 +452,7 @@ export default function Home() {
               {selectedCoin.icon}
             </div>
             <span className="text-xl font-medium tracking-tight">
-              {selectedCoin.name} Tracker
+              Crypto Tracker
             </span>
           </div>
           <button
