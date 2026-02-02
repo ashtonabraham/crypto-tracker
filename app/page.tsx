@@ -46,8 +46,11 @@ const COINS: Coin[] = [
 ];
 
 const STORAGE_KEY = "crypto-tracker-last-coin";
+const VIEW_MODE_KEY = "crypto-tracker-view-mode";
 const DEBOUNCE_MS = 300;
 const AUTO_REFRESH_MS = 60000;
+
+type ViewMode = "single" | "watchlist";
 
 // Transform OHLC data for chart
 function transformOHLC(ohlc: number[][]): CandlestickData<Time>[] {
@@ -82,6 +85,7 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [refreshCountdown, setRefreshCountdown] = useState(AUTO_REFRESH_MS / 1000);
+  const [viewMode, setViewMode] = useState<ViewMode>("single");
 
   // Refs
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -98,7 +102,7 @@ export default function Home() {
     timeRangeRef.current = timeRange;
   }, [timeRange]);
 
-  // Load last viewed coin from localStorage
+  // Load last viewed coin and view mode from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     let initialCoin = COINS[0];
@@ -107,6 +111,12 @@ export default function Home() {
       if (coin) initialCoin = coin;
     }
     setSelectedCoin(initialCoin);
+
+    const savedViewMode = localStorage.getItem(VIEW_MODE_KEY);
+    if (savedViewMode === "watchlist" || savedViewMode === "single") {
+      setViewMode(savedViewMode);
+    }
+
     setIsInitialized(true);
   }, []);
 
@@ -419,6 +429,12 @@ export default function Home() {
     setIsLoading(false);
   };
 
+  // Handle view mode change
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    localStorage.setItem(VIEW_MODE_KEY, mode);
+  };
+
   // Close dropdown
   useEffect(() => {
     const handleClickOutside = () => setIsDropdownOpen(false);
@@ -445,7 +461,7 @@ export default function Home() {
     <main className="min-h-screen bg-bg-primary">
       <div className="max-w-[900px] mx-auto px-6 py-10">
         {/* Header */}
-        <header className="flex items-center justify-between mb-12">
+        <header className="flex items-center justify-between mb-8">
           <div className="flex items-center">
             <span className="text-xl font-medium tracking-tight flex items-center">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" className="inline-block -mr-0.5">
@@ -472,6 +488,32 @@ export default function Home() {
           </div>
         </header>
 
+        {/* View Mode Toggle */}
+        <div className="flex bg-bg-secondary border border-border rounded-lg p-1 mb-8 w-fit">
+          <button
+            onClick={() => handleViewModeChange("watchlist")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+              viewMode === "watchlist" ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Watchlist
+          </button>
+          <button
+            onClick={() => handleViewModeChange("single")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+              viewMode === "single" ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Single Coin
+          </button>
+        </div>
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-red-400 text-sm mb-5">
@@ -479,162 +521,254 @@ export default function Home() {
           </div>
         )}
 
-        {/* Price Section */}
-        <section className="mb-10">
-          <div className="flex items-center gap-2 mb-2">
-            <p className="text-sm text-gray-500 uppercase tracking-wider">
-              {selectedCoin.name} Price
-            </p>
-            {isStale && (
-              <span className="px-2 py-0.5 text-xs bg-yellow-500/10 text-yellow-500 rounded-full">
-                updating...
-              </span>
-            )}
-          </div>
-          <div className="flex items-baseline gap-4 mb-5">
-            <span className="font-mono text-5xl md:text-6xl font-semibold tracking-tight">
-              {currentPrice ? formatPrice(currentPrice.price) : "--"}
-            </span>
-            <span className="text-2xl text-gray-500">USD</span>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 max-w-[400px] mb-5">
-            <div className="bg-bg-secondary border border-border rounded-xl p-4">
-              <p className="text-sm text-gray-500 mb-1.5">24h Change</p>
-              <p
-                className={`font-mono text-lg font-medium ${
-                  currentPrice
-                    ? currentPrice.change24h >= 0
-                      ? "text-green-500"
-                      : "text-red-500"
-                    : "text-gray-400"
-                }`}
-              >
-                {currentPrice ? formatChange(currentPrice.change24h) : "--"}
-              </p>
+        {/* Watchlist View */}
+        {viewMode === "watchlist" && (
+          <section className="mb-8">
+            <div className="flex items-center gap-2 mb-5">
+              <h2 className="text-base font-medium text-gray-400">All Coins</h2>
+              {isStale && (
+                <span className="px-2 py-0.5 text-xs bg-yellow-500/10 text-yellow-500 rounded-full">
+                  updating...
+                </span>
+              )}
             </div>
-            <div className="bg-bg-secondary border border-border rounded-xl p-4">
-              <p className="text-sm text-gray-500 mb-1.5">7d Change</p>
-              <p
-                className={`font-mono text-lg font-medium ${
-                  currentPrice
-                    ? currentPrice.change7d >= 0
-                      ? "text-green-500"
-                      : "text-red-500"
-                    : "text-gray-400"
-                }`}
-              >
-                {currentPrice ? formatChange(currentPrice.change7d) : "--"}
-              </p>
-            </div>
-          </div>
-
-          {/* Coin Selector Dropdown */}
-          <div className="relative max-w-[400px]">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDropdownOpen(!isDropdownOpen);
-              }}
-              className="w-full flex items-center justify-between px-4 py-3 bg-bg-secondary border border-border rounded-xl text-left transition-all hover:border-gray-600"
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-7 h-7 bg-gradient-to-br ${selectedCoin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
-                >
-                  {selectedCoin.icon}
-                </div>
-                <span className="font-medium">{selectedCoin.name}</span>
-                <span className="text-gray-500 text-sm">{selectedCoin.symbol}</span>
-              </div>
-              <svg
-                className={`w-5 h-5 text-gray-500 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl">
-                {COINS.map((coin) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {COINS.map((coin) => {
+                const coinData = allPrices[coin.id];
+                return (
                   <button
                     key={coin.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       handleCoinChange(coin);
+                      handleViewModeChange("single");
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all hover:bg-bg-tertiary ${
-                      coin.id === selectedCoin.id ? "bg-bg-tertiary" : ""
+                    className="bg-bg-secondary border border-border rounded-xl p-5 text-left transition-all hover:border-accent-blue hover:bg-bg-tertiary group"
+                  >
+                    {/* Coin Header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div
+                        className={`w-10 h-10 bg-gradient-to-br ${coin.gradient} rounded-full flex items-center justify-center font-bold text-lg text-black`}
+                      >
+                        {coin.icon}
+                      </div>
+                      <div>
+                        <p className="font-medium">{coin.name}</p>
+                        <p className="text-sm text-gray-500">{coin.symbol}</p>
+                      </div>
+                      <svg
+                        className="w-5 h-5 text-gray-600 ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+
+                    {/* Price */}
+                    <p className="font-mono text-2xl font-semibold mb-3">
+                      {coinData ? formatPrice(coinData.price) : "--"}
+                    </p>
+
+                    {/* Changes */}
+                    <div className="flex gap-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-0.5">24h</p>
+                        <p
+                          className={`font-mono text-sm font-medium ${
+                            coinData
+                              ? coinData.change24h >= 0
+                                ? "text-green-500"
+                                : "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {coinData ? formatChange(coinData.change24h) : "--"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-0.5">7d</p>
+                        <p
+                          className={`font-mono text-sm font-medium ${
+                            coinData
+                              ? coinData.change7d >= 0
+                                ? "text-green-500"
+                                : "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {coinData ? formatChange(coinData.change7d) : "--"}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Single Coin View */}
+        {viewMode === "single" && (
+          <>
+            {/* Price Section */}
+            <section className="mb-10">
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm text-gray-500 uppercase tracking-wider">
+                  {selectedCoin.name} Price
+                </p>
+                {isStale && (
+                  <span className="px-2 py-0.5 text-xs bg-yellow-500/10 text-yellow-500 rounded-full">
+                    updating...
+                  </span>
+                )}
+              </div>
+              <div className="flex items-baseline gap-4 mb-5">
+                <span className="font-mono text-5xl md:text-6xl font-semibold tracking-tight">
+                  {currentPrice ? formatPrice(currentPrice.price) : "--"}
+                </span>
+                <span className="text-2xl text-gray-500">USD</span>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 max-w-[400px] mb-5">
+                <div className="bg-bg-secondary border border-border rounded-xl p-4">
+                  <p className="text-sm text-gray-500 mb-1.5">24h Change</p>
+                  <p
+                    className={`font-mono text-lg font-medium ${
+                      currentPrice
+                        ? currentPrice.change24h >= 0
+                          ? "text-green-500"
+                          : "text-red-500"
+                        : "text-gray-400"
                     }`}
                   >
-                    <div
-                      className={`w-7 h-7 bg-gradient-to-br ${coin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
-                    >
-                      {coin.icon}
-                    </div>
-                    <span className="font-medium">{coin.name}</span>
-                    <span className="text-gray-500 text-sm">{coin.symbol}</span>
-                    {coin.id === selectedCoin.id && (
-                      <svg className="w-5 h-5 text-accent-blue ml-auto" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                    {currentPrice ? formatChange(currentPrice.change24h) : "--"}
+                  </p>
+                </div>
+                <div className="bg-bg-secondary border border-border rounded-xl p-4">
+                  <p className="text-sm text-gray-500 mb-1.5">7d Change</p>
+                  <p
+                    className={`font-mono text-lg font-medium ${
+                      currentPrice
+                        ? currentPrice.change7d >= 0
+                          ? "text-green-500"
+                          : "text-red-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {currentPrice ? formatChange(currentPrice.change7d) : "--"}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* Chart Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-medium text-gray-400">Price Chart</h2>
-            <div className="flex bg-bg-secondary border border-border rounded-lg p-1">
-              <button
-                onClick={() => handleTimeRangeChange(1)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  timeRange === 1 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
-                }`}
-              >
-                24H
-              </button>
-              <button
-                onClick={() => handleTimeRangeChange(7)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  timeRange === 7 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
-                }`}
-              >
-                7D
-              </button>
-            </div>
-          </div>
-          <div className="bg-bg-secondary border border-border rounded-xl p-5 h-[400px]">
-            {chartData.length > 0 ? (
-              <Chart data={chartData} />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-gray-500">
-                <svg className="w-12 h-12 mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-                <p className="text-sm">{isLoading ? "Loading chart data..." : "Chart data unavailable - try refreshing"}</p>
+              {/* Coin Selector Dropdown */}
+              <div className="relative max-w-[400px]">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(!isDropdownOpen);
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-bg-secondary border border-border rounded-xl text-left transition-all hover:border-gray-600"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-7 h-7 bg-gradient-to-br ${selectedCoin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
+                    >
+                      {selectedCoin.icon}
+                    </div>
+                    <span className="font-medium">{selectedCoin.name}</span>
+                    <span className="text-gray-500 text-sm">{selectedCoin.symbol}</span>
+                  </div>
+                  <svg
+                    className={`w-5 h-5 text-gray-500 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl">
+                    {COINS.map((coin) => (
+                      <button
+                        key={coin.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCoinChange(coin);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all hover:bg-bg-tertiary ${
+                          coin.id === selectedCoin.id ? "bg-bg-tertiary" : ""
+                        }`}
+                      >
+                        <div
+                          className={`w-7 h-7 bg-gradient-to-br ${coin.gradient} rounded-full flex items-center justify-center font-bold text-sm text-black`}
+                        >
+                          {coin.icon}
+                        </div>
+                        <span className="font-medium">{coin.name}</span>
+                        <span className="text-gray-500 text-sm">{coin.symbol}</span>
+                        {coin.id === selectedCoin.id && (
+                          <svg className="w-5 h-5 text-accent-blue ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </section>
+            </section>
+
+            {/* Chart Section */}
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-base font-medium text-gray-400">Price Chart</h2>
+                <div className="flex bg-bg-secondary border border-border rounded-lg p-1">
+                  <button
+                    onClick={() => handleTimeRangeChange(1)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      timeRange === 1 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+                    }`}
+                  >
+                    24H
+                  </button>
+                  <button
+                    onClick={() => handleTimeRangeChange(7)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      timeRange === 7 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+                    }`}
+                  >
+                    7D
+                  </button>
+                </div>
+              </div>
+              <div className="bg-bg-secondary border border-border rounded-xl p-5 h-[400px]">
+                {chartData.length > 0 ? (
+                  <Chart data={chartData} />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                    <svg className="w-12 h-12 mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                    <p className="text-sm">{isLoading ? "Loading chart data..." : "Chart data unavailable - try refreshing"}</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
 
         {/* Footer */}
         <footer className="flex items-center justify-between pt-5 border-t border-border">
