@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { CandlestickData, Time } from "lightweight-charts";
 import Chart from "@/components/Chart";
 import RefreshIcon from "@/components/RefreshIcon";
+import AlertManager from "@/components/AlertManager";
 import {
   getPricesFromCache,
   savePricesToCache,
@@ -454,14 +455,21 @@ export default function Home() {
               rypto Tracker
             </span>
           </div>
-          <button
-            onClick={handleManualRefresh}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all hover:bg-accent-blue hover:border-accent-blue disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <RefreshIcon className={`w-4 h-4 ${isLoading ? "animate-spin-fast" : ""}`} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <AlertManager
+              coins={COINS}
+              selectedCoin={selectedCoin}
+              currentPrices={allPrices}
+            />
+            <button
+              onClick={handleManualRefresh}
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all hover:bg-accent-blue hover:border-accent-blue disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshIcon className={`w-4 h-4 ${isLoading ? "animate-spin-fast" : ""}`} />
+              Refresh
+            </button>
+          </div>
         </header>
 
         {/* Error Message */}
