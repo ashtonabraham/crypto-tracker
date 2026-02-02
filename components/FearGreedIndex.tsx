@@ -158,8 +158,8 @@ export default function FearGreedIndex() {
             {/* Current Value */}
             <div className="px-4 py-4">
               {/* Large Gauge */}
-              <div className="relative h-20 mb-4">
-                <svg viewBox="0 0 100 50" className="w-full h-full">
+              <div className="relative h-24 mb-4">
+                <svg viewBox="0 0 100 62" className="w-full h-full">
                   <defs>
                     <linearGradient id="gaugeGradientLarge" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#ef4444" />
@@ -198,9 +198,9 @@ export default function FearGreedIndex() {
                   {/* Center dot */}
                   <circle cx="50" cy="45" r="4" fill={color} />
                   {/* Labels */}
-                  <text x="8" y="48" fontSize="6" fill="#666" textAnchor="start">0</text>
-                  <text x="50" y="12" fontSize="6" fill="#666" textAnchor="middle">50</text>
-                  <text x="92" y="48" fontSize="6" fill="#666" textAnchor="end">100</text>
+                  <text x="10" y="58" fontSize="7" fill="white" textAnchor="middle">0</text>
+                  <text x="50" y="58" fontSize="7" fill="white" textAnchor="middle">50</text>
+                  <text x="90" y="58" fontSize="7" fill="white" textAnchor="middle">100</text>
                 </svg>
               </div>
 
