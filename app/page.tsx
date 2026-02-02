@@ -5,6 +5,7 @@ import { CandlestickData, Time } from "lightweight-charts";
 import Chart from "@/components/Chart";
 import RefreshIcon from "@/components/RefreshIcon";
 import AlertManager from "@/components/AlertManager";
+import FearGreedIndex from "@/components/FearGreedIndex";
 import {
   getPricesFromCache,
   savePricesToCache,
@@ -472,6 +473,7 @@ export default function Home() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <FearGreedIndex />
             <AlertManager
               coins={COINS}
               selectedCoin={selectedCoin}
