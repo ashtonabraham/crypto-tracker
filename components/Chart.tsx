@@ -66,6 +66,17 @@ export default function Chart({ data }: ChartProps) {
         timeVisible: true,
         secondsVisible: false,
       },
+      localization: {
+        timeFormatter: (time: number) => {
+          const date = new Date(time * 1000);
+          return date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        },
+      },
       handleScroll: {
         vertTouchDrag: false,
       },
