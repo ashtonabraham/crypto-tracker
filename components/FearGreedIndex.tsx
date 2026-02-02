@@ -81,9 +81,8 @@ export default function FearGreedIndex() {
         className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary border border-border rounded-lg transition-all hover:border-gray-600"
       >
         {/* Mini Gauge */}
-        <div className="relative w-8 h-4">
-          {/* Background arc */}
-          <svg viewBox="0 0 32 16" className="w-full h-full">
+        <div className="relative w-8 h-5">
+          <svg viewBox="0 0 32 20" className="w-full h-full overflow-visible">
             <defs>
               <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#ef4444" />
@@ -95,7 +94,7 @@ export default function FearGreedIndex() {
             </defs>
             {/* Background arc */}
             <path
-              d="M 2 14 A 14 14 0 0 1 30 14"
+              d="M 4 18 A 12 12 0 0 1 28 18"
               fill="none"
               stroke="#333"
               strokeWidth="3"
@@ -103,7 +102,7 @@ export default function FearGreedIndex() {
             />
             {/* Colored arc */}
             <path
-              d="M 2 14 A 14 14 0 0 1 30 14"
+              d="M 4 18 A 12 12 0 0 1 28 18"
               fill="none"
               stroke="url(#gaugeGradient)"
               strokeWidth="3"
@@ -113,15 +112,15 @@ export default function FearGreedIndex() {
             {/* Needle */}
             <line
               x1="16"
-              y1="14"
-              x2={16 + 10 * Math.cos(Math.PI - (current.value / 100) * Math.PI)}
-              y2={14 - 10 * Math.sin((current.value / 100) * Math.PI)}
+              y1="18"
+              x2={16 + 9 * Math.cos(Math.PI - (current.value / 100) * Math.PI)}
+              y2={18 - 9 * Math.sin((current.value / 100) * Math.PI)}
               stroke={color}
               strokeWidth="2"
               strokeLinecap="round"
             />
             {/* Center dot */}
-            <circle cx="16" cy="14" r="2" fill={color} />
+            <circle cx="16" cy="18" r="2" fill={color} />
           </svg>
         </div>
         
@@ -199,7 +198,7 @@ export default function FearGreedIndex() {
                   <circle cx="50" cy="50" r="4" fill={color} />
                   {/* Labels */}
                   <text x="10" y="64" fontSize="7" fill="white" textAnchor="middle">0</text>
-                  <text x="50" y="18" fontSize="7" fill="white" textAnchor="middle">50</text>
+                  <text x="50" y="20" fontSize="7" fill="white" textAnchor="middle">50</text>
                   <text x="90" y="64" fontSize="7" fill="white" textAnchor="middle">100</text>
                 </svg>
               </div>
