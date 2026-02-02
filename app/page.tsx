@@ -95,9 +95,12 @@ export default function Home() {
   const timeRangeRef = useRef(timeRange);
   const watchlistBtnRef = useRef<HTMLButtonElement>(null);
   const singleBtnRef = useRef<HTMLButtonElement>(null);
+  const btn24hRef = useRef<HTMLButtonElement>(null);
+  const btn7dRef = useRef<HTMLButtonElement>(null);
 
-  // Toggle indicator state
+  // Toggle indicator states
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [timeIndicatorStyle, setTimeIndicatorStyle] = useState({ left: 0, width: 0 });
 
   // Keep refs in sync
   useEffect(() => {
@@ -119,6 +122,22 @@ export default function Home() {
     window.addEventListener("resize", updateIndicator);
     return () => window.removeEventListener("resize", updateIndicator);
   }, [viewMode]);
+
+  // Update time range indicator position
+  useEffect(() => {
+    const updateTimeIndicator = () => {
+      const btn = timeRange === 1 ? btn24hRef.current : btn7dRef.current;
+      if (btn) {
+        setTimeIndicatorStyle({
+          left: btn.offsetLeft,
+          width: btn.offsetWidth,
+        });
+      }
+    };
+    updateTimeIndicator();
+    window.addEventListener("resize", updateTimeIndicator);
+    return () => window.removeEventListener("resize", updateTimeIndicator);
+  }, [timeRange]);
 
   useEffect(() => {
     timeRangeRef.current = timeRange;
@@ -763,19 +782,29 @@ export default function Home() {
             <section className="mb-8">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-base font-medium text-gray-400">Price Chart</h2>
-                <div className="flex bg-bg-secondary border border-border rounded-lg p-1">
+                <div className="relative flex bg-bg-secondary border border-border rounded-lg p-1">
+                  {/* Sliding indicator */}
+                  <div
+                    className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-150 ease-out"
+                    style={{
+                      left: timeIndicatorStyle.left,
+                      width: timeIndicatorStyle.width,
+                    }}
+                  />
                   <button
+                    ref={btn24hRef}
                     onClick={() => handleTimeRangeChange(1)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      timeRange === 1 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+                      timeRange === 1 ? "text-white" : "text-gray-500 hover:text-white"
                     }`}
                   >
                     24H
                   </button>
                   <button
+                    ref={btn7dRef}
                     onClick={() => handleTimeRangeChange(7)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                      timeRange === 7 ? "bg-accent-blue text-white" : "text-gray-500 hover:text-white"
+                    className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+                      timeRange === 7 ? "text-white" : "text-gray-500 hover:text-white"
                     }`}
                   >
                     7D
