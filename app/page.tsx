@@ -484,7 +484,10 @@ export default function Home() {
               </span>
             )}
           </div>
-          <div className="flex items-baseline gap-4 mb-5">
+          <div className="flex items-baseline gap-3 mb-5">
+            <span className={`text-4xl md:text-5xl bg-gradient-to-br ${selectedCoin.gradient} bg-clip-text text-transparent`}>
+              {selectedCoin.icon}
+            </span>
             <span className="font-mono text-5xl md:text-6xl font-semibold tracking-tight">
               {currentPrice ? formatPrice(currentPrice.price) : "--"}
             </span>
