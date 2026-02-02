@@ -460,7 +460,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-bg-primary">
-      <div className="max-w-[1100px] mx-auto px-6 py-10">
+      <div className="max-w-[1350px] mx-auto px-6 py-10">
         {/* Header */}
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center">
