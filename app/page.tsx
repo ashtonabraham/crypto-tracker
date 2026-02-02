@@ -446,10 +446,11 @@ export default function Home() {
         {/* Header */}
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
-            <div
-              className={`w-9 h-9 bg-gradient-to-br ${selectedCoin.gradient} rounded-full flex items-center justify-center font-bold text-lg text-black`}
-            >
-              {selectedCoin.icon}
+            <div className="w-9 h-9 bg-gradient-to-br from-accent-blue to-[#00d4ff] rounded-full flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v12M9 9c0-1 1-2 3-2s3 1 3 2-1 2-3 2-3 1-3 2 1 2 3 2 3-1 3-2" />
+              </svg>
             </div>
             <span className="text-xl font-medium tracking-tight">
               Crypto Tracker
