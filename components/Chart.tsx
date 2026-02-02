@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { createChart, IChartApi, ISeriesApi, CandlestickData, Time } from "lightweight-charts";
+import { createChart, IChartApi, ISeriesApi, CandlestickData, Time, ColorType } from "lightweight-charts";
 
 interface ChartProps {
   data: CandlestickData<Time>[];
@@ -18,7 +18,7 @@ export default function Chart({ data }: ChartProps) {
     // Create chart
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { type: "solid", color: "transparent" },
+        background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#a0a0a0",
         fontFamily: "'JetBrains Mono', monospace",
       },
