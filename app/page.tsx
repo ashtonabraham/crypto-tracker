@@ -343,6 +343,9 @@ export default function Home() {
     localStorage.setItem(STORAGE_KEY, coin.id);
     setIsDropdownOpen(false);
 
+    // Clear old chart data immediately when switching coins
+    setChartData([]);
+
     // Prices already cached - just need OHLC
     debouncedLoad(coin, timeRange);
   };
@@ -351,7 +354,12 @@ export default function Home() {
   const handleTimeRangeChange = (range: 1 | 7) => {
     if (range === timeRange) return;
     setTimeRange(range);
-    debouncedLoad(selectedCoin, range);
+
+    // Clear chart and force fresh fetch when changing time range
+    setChartData([]);
+    
+    // Skip debounce for time range changes - fetch immediately
+    loadAllData(selectedCoin, range, true);
   };
 
   // Manual refresh - always fetch fresh
