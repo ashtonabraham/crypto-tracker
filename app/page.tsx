@@ -447,7 +447,7 @@ export default function Home() {
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 1v2M15 1v2M9 21v2M15 21v2" />
+              <path d="M9 1v3.5M15 1v3.5M9 19.5v3.5M15 19.5v3.5" />
               <path d="M18 8c-1-2-3-3.5-6-3.5-4 0-7 3.5-7 7.5s3 7.5 7 7.5c3 0 5-1.5 6-3.5" />
             </svg>
             <span className="text-xl font-medium tracking-tight">
