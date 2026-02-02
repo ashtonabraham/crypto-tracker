@@ -523,7 +523,7 @@ export default function Home() {
             <button
               onClick={handleManualRefresh}
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all hover:bg-accent-blue hover:border-accent-blue disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2.5 bg-bg-tertiary border border-border rounded-lg text-sm font-medium transition-all duration-300 hover:bg-accent-blue hover:border-accent-blue disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <RefreshIcon className={`w-4 h-4 ${isLoading ? "animate-spin-fast" : ""}`} />
               Refresh
@@ -595,7 +595,7 @@ export default function Home() {
                       handleCoinChange(coin);
                       handleViewModeChange("single");
                     }}
-                    className="bg-bg-secondary border border-border rounded-xl p-5 text-left transition-all hover:border-accent-blue hover:bg-bg-tertiary group"
+                    className="bg-bg-secondary border border-border rounded-xl p-5 text-left transition-all duration-300 hover:border-accent-blue hover:bg-bg-tertiary group"
                   >
                     {/* Coin Header */}
                     <div className="flex items-center gap-3 mb-4">
@@ -714,7 +714,7 @@ export default function Home() {
                     e.stopPropagation();
                     setIsDropdownOpen(!isDropdownOpen);
                   }}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-bg-secondary border border-border rounded-xl text-left transition-all hover:border-gray-600"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-bg-secondary border border-border rounded-xl text-left transition-all duration-300 hover:border-gray-600"
                 >
                   <div className="flex items-center gap-3">
                     <div
