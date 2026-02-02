@@ -333,7 +333,7 @@ export default function Home() {
   }, [isInitialized]);
 
   // Handle coin change
-  const handleCoinChange = (coin: Coin) => {
+  const handleCoinChange = async (coin: Coin) => {
     if (coin.id === selectedCoin.id) {
       setIsDropdownOpen(false);
       return;
@@ -343,23 +343,59 @@ export default function Home() {
     localStorage.setItem(STORAGE_KEY, coin.id);
     setIsDropdownOpen(false);
 
-    // Clear old chart data immediately when switching coins
-    setChartData([]);
-
-    // Prices already cached - just need OHLC
-    debouncedLoad(coin, timeRange);
+    // Check if we have cached OHLC data for this coin
+    const ohlcCache = getOHLCFromCache(coin.id, timeRange);
+    if (ohlcCache.data && ohlcCache.data.length > 0) {
+      // Show cached data immediately
+      setChartData(transformOHLC(ohlcCache.data));
+      if (!ohlcCache.isFresh) {
+        // Revalidate in background
+        fetchOHLC(coin.id, timeRange, true).then((ohlc) => {
+          if (ohlc && ohlc.length > 0 && coin.id === selectedCoinRef.current.id) {
+            setChartData(transformOHLC(ohlc));
+          }
+        });
+      }
+    } else {
+      // No cache - show loading and fetch
+      setIsLoading(true);
+      setChartData([]);
+      const ohlc = await fetchOHLC(coin.id, timeRange, false);
+      if (ohlc && ohlc.length > 0 && coin.id === selectedCoinRef.current.id) {
+        setChartData(transformOHLC(ohlc));
+      }
+      setIsLoading(false);
+    }
   };
 
   // Handle time range change
-  const handleTimeRangeChange = (range: 1 | 7) => {
+  const handleTimeRangeChange = async (range: 1 | 7) => {
     if (range === timeRange) return;
     setTimeRange(range);
 
-    // Clear chart and force fresh fetch when changing time range
-    setChartData([]);
-    
-    // Skip debounce for time range changes - fetch immediately
-    loadAllData(selectedCoin, range, true);
+    // Check if we have cached data for this range
+    const ohlcCache = getOHLCFromCache(selectedCoin.id, range);
+    if (ohlcCache.data && ohlcCache.data.length > 0) {
+      // Show cached data immediately
+      setChartData(transformOHLC(ohlcCache.data));
+      if (!ohlcCache.isFresh) {
+        // Revalidate in background
+        fetchOHLC(selectedCoin.id, range, true).then((ohlc) => {
+          if (ohlc && ohlc.length > 0) {
+            setChartData(transformOHLC(ohlc));
+          }
+        });
+      }
+    } else {
+      // No cache - show loading and fetch
+      setIsLoading(true);
+      setChartData([]);
+      const ohlc = await fetchOHLC(selectedCoin.id, range, false);
+      if (ohlc && ohlc.length > 0) {
+        setChartData(transformOHLC(ohlc));
+      }
+      setIsLoading(false);
+    }
   };
 
   // Manual refresh - always fetch fresh
