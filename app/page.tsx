@@ -93,11 +93,32 @@ export default function Home() {
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const selectedCoinRef = useRef(selectedCoin);
   const timeRangeRef = useRef(timeRange);
+  const watchlistBtnRef = useRef<HTMLButtonElement>(null);
+  const singleBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Toggle indicator state
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
 
   // Keep refs in sync
   useEffect(() => {
     selectedCoinRef.current = selectedCoin;
   }, [selectedCoin]);
+
+  // Update toggle indicator position
+  useEffect(() => {
+    const updateIndicator = () => {
+      const btn = viewMode === "watchlist" ? watchlistBtnRef.current : singleBtnRef.current;
+      if (btn) {
+        setIndicatorStyle({
+          left: btn.offsetLeft,
+          width: btn.offsetWidth,
+        });
+      }
+    };
+    updateIndicator();
+    window.addEventListener("resize", updateIndicator);
+    return () => window.removeEventListener("resize", updateIndicator);
+  }, [viewMode]);
 
   useEffect(() => {
     timeRangeRef.current = timeRange;
@@ -496,11 +517,12 @@ export default function Home() {
           <div
             className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-150 ease-out"
             style={{
-              width: "calc(50% - 2px)",
-              left: viewMode === "watchlist" ? "4px" : "calc(50% + 2px)",
+              left: indicatorStyle.left,
+              width: indicatorStyle.width,
             }}
           />
           <button
+            ref={watchlistBtnRef}
             onClick={() => handleViewModeChange("watchlist")}
             className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 flex items-center gap-2 ${
               viewMode === "watchlist" ? "text-white" : "text-gray-500 hover:text-white"
@@ -512,6 +534,7 @@ export default function Home() {
             Watchlist
           </button>
           <button
+            ref={singleBtnRef}
             onClick={() => handleViewModeChange("single")}
             className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 flex items-center gap-2 ${
               viewMode === "single" ? "text-white" : "text-gray-500 hover:text-white"
