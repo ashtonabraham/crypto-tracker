@@ -446,9 +446,9 @@ export default function Home() {
         {/* Header */}
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M10 4v16M14 4v16" />
-              <path d="M18 8c0-3.3-2.7-6-6-6S6 4.7 6 8v8c0 3.3 2.7 6 6 6s6-2.7 6-6" />
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 2v3M14 2v3M10 19v3M14 19v3" />
+              <path d="M18 8c0-2.8-2.7-5-6-5S6 5.2 6 8v8c0 2.8 2.7 5 6 5s6-2.2 6-5" />
             </svg>
             <span className="text-xl font-medium tracking-tight">
               Crypto Tracker
