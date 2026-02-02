@@ -62,20 +62,7 @@ export default function Chart({ data }: ChartProps) {
       },
       timeScale: {
         borderColor: "#222222",
-        visible: true,
-        timeVisible: true,
-        secondsVisible: false,
-      },
-      localization: {
-        timeFormatter: (time: number) => {
-          const date = new Date(time * 1000);
-          return date.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        },
+        visible: false,
       },
       handleScroll: {
         vertTouchDrag: false,
