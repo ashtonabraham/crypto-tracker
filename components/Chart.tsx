@@ -62,7 +62,9 @@ export default function Chart({ data }: ChartProps) {
       },
       timeScale: {
         borderColor: "#222222",
-        visible: false,
+        visible: true,
+        timeVisible: true,
+        secondsVisible: false,
       },
       handleScroll: {
         vertTouchDrag: false,
