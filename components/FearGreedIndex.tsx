@@ -158,8 +158,8 @@ export default function FearGreedIndex() {
             {/* Current Value */}
             <div className="px-4 py-4">
               {/* Large Gauge */}
-              <div className="relative h-24 mb-4">
-                <svg viewBox="0 0 100 62" className="w-full h-full">
+              <div className="relative h-28 mb-4">
+                <svg viewBox="0 0 100 70" className="w-full h-full">
                   <defs>
                     <linearGradient id="gaugeGradientLarge" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#ef4444" />
@@ -171,7 +171,7 @@ export default function FearGreedIndex() {
                   </defs>
                   {/* Background arc */}
                   <path
-                    d="M 10 45 A 40 40 0 0 1 90 45"
+                    d="M 10 50 A 40 40 0 0 1 90 50"
                     fill="none"
                     stroke="#222"
                     strokeWidth="8"
@@ -179,7 +179,7 @@ export default function FearGreedIndex() {
                   />
                   {/* Colored arc */}
                   <path
-                    d="M 10 45 A 40 40 0 0 1 90 45"
+                    d="M 10 50 A 40 40 0 0 1 90 50"
                     fill="none"
                     stroke="url(#gaugeGradientLarge)"
                     strokeWidth="8"
@@ -188,19 +188,19 @@ export default function FearGreedIndex() {
                   {/* Needle */}
                   <line
                     x1="50"
-                    y1="45"
+                    y1="50"
                     x2={50 + 30 * Math.cos(Math.PI - (current.value / 100) * Math.PI)}
-                    y2={45 - 30 * Math.sin((current.value / 100) * Math.PI)}
+                    y2={50 - 30 * Math.sin((current.value / 100) * Math.PI)}
                     stroke={color}
                     strokeWidth="3"
                     strokeLinecap="round"
                   />
                   {/* Center dot */}
-                  <circle cx="50" cy="45" r="4" fill={color} />
+                  <circle cx="50" cy="50" r="4" fill={color} />
                   {/* Labels */}
-                  <text x="10" y="58" fontSize="7" fill="white" textAnchor="middle">0</text>
-                  <text x="50" y="20" fontSize="7" fill="white" textAnchor="middle">50</text>
-                  <text x="90" y="58" fontSize="7" fill="white" textAnchor="middle">100</text>
+                  <text x="10" y="64" fontSize="7" fill="white" textAnchor="middle">0</text>
+                  <text x="50" y="18" fontSize="7" fill="white" textAnchor="middle">50</text>
+                  <text x="90" y="64" fontSize="7" fill="white" textAnchor="middle">100</text>
                 </svg>
               </div>
 
