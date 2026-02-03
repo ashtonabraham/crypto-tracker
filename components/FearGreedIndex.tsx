@@ -35,6 +35,21 @@ export default function FearGreedIndex() {
   const [data, setData] = useState<FearGreedData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isTooltipAnimated, setIsTooltipAnimated] = useState(false);
+
+  // Handle opening tooltip with animation
+  const openTooltip = () => {
+    setShowTooltip(true);
+    // Trigger animation after mount
+    setTimeout(() => setIsTooltipAnimated(true), 10);
+  };
+
+  // Handle closing tooltip with animation
+  const closeTooltip = () => {
+    setIsTooltipAnimated(false);
+    // Unmount after animation completes
+    setTimeout(() => setShowTooltip(false), 300);
+  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -77,7 +92,7 @@ export default function FearGreedIndex() {
     <div className="relative">
       {/* Main Button */}
       <button
-        onClick={() => setShowTooltip(!showTooltip)}
+        onClick={() => showTooltip ? closeTooltip() : openTooltip()}
         className="flex items-center gap-2 px-3 py-2 bg-bg-tertiary border border-border rounded-lg transition-all duration-400 hover:border-gray-600"
       >
         {/* Mini Gauge */}
@@ -140,12 +155,18 @@ export default function FearGreedIndex() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40"
-            onClick={() => setShowTooltip(false)}
+            className={`fixed inset-0 z-40 transition-opacity duration-300 ${isTooltipAnimated ? "opacity-100" : "opacity-0"}`}
+            onClick={closeTooltip}
           />
           
           {/* Tooltip Content */}
-          <div className="absolute top-full right-0 mt-2 w-72 bg-bg-secondary border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
+          <div 
+            className={`absolute top-full right-0 mt-2 w-72 bg-bg-secondary border border-border rounded-xl shadow-2xl z-50 overflow-hidden transition-all duration-300 origin-top-right ${
+              isTooltipAnimated 
+                ? "opacity-100 scale-100" 
+                : "opacity-0 scale-90"
+            }`}
+          >
             {/* Header */}
             <div className="px-4 py-3 border-b border-border">
               <div className="flex items-center justify-between">
