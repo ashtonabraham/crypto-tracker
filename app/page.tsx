@@ -83,6 +83,7 @@ export default function Home() {
   const [isStale, setIsStale] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownAnimated, setIsDropdownAnimated] = useState(false);
   const [hoveredCoin, setHoveredCoin] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -385,16 +386,30 @@ export default function Home() {
     loadAllData(selectedCoin, timeRange, true);
   }, [isInitialized]);
 
+  // Dropdown animation handlers
+  const openDropdown = () => {
+    setIsDropdownOpen(true);
+    setTimeout(() => setIsDropdownAnimated(true), 10);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownAnimated(false);
+    setTimeout(() => {
+      setIsDropdownOpen(false);
+      setHoveredCoin(null);
+    }, 300);
+  };
+
   // Handle coin change
   const handleCoinChange = async (coin: Coin) => {
     if (coin.id === selectedCoin.id) {
-      setIsDropdownOpen(false);
+      closeDropdown();
       return;
     }
 
     setSelectedCoin(coin);
     localStorage.setItem(STORAGE_KEY, coin.id);
-    setIsDropdownOpen(false);
+    closeDropdown();
 
     // Check if we have cached OHLC data for this coin
     const ohlcCache = getOHLCFromCache(coin.id, timeRange);
@@ -477,14 +492,14 @@ export default function Home() {
     localStorage.setItem(VIEW_MODE_KEY, mode);
   };
 
-  // Close dropdown
+  // Close dropdown on click outside
   useEffect(() => {
-    const handleClickOutside = () => setIsDropdownOpen(false);
-    if (isDropdownOpen) {
+    if (isDropdownOpen && isDropdownAnimated) {
+      const handleClickOutside = () => closeDropdown();
       document.addEventListener("click", handleClickOutside);
       return () => document.removeEventListener("click", handleClickOutside);
     }
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isDropdownAnimated]);
 
   // Get current coin's price data
   const currentPrice = allPrices[selectedCoin.id];
@@ -712,7 +727,7 @@ export default function Home() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsDropdownOpen(!isDropdownOpen);
+                    isDropdownOpen ? closeDropdown() : openDropdown();
                   }}
                   className="w-full flex items-center justify-between px-4 py-3 bg-bg-secondary border border-border rounded-xl text-left transition-all duration-400 hover:border-gray-600"
                 >
@@ -737,7 +752,11 @@ export default function Home() {
 
                 {isDropdownOpen && (
                   <div 
-                    className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl"
+                    className={`absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border rounded-xl overflow-hidden z-10 shadow-xl transition-all duration-300 origin-top-left ${
+                      isDropdownAnimated 
+                        ? "opacity-100 scale-100" 
+                        : "opacity-0 scale-90"
+                    }`}
                     onMouseLeave={() => setHoveredCoin(null)}
                   >
                     {COINS.map((coin) => {
