@@ -808,10 +808,11 @@ export default function Home() {
                 <div className="relative flex bg-bg-secondary border border-border rounded-lg p-1">
                   {/* Sliding indicator */}
                   <div
-                    className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all duration-400 ease-out"
+                    className="absolute top-1 bottom-1 bg-accent-blue rounded-md transition-all ease-out"
                     style={{
                       left: timeIndicatorStyle.left,
                       width: timeIndicatorStyle.width,
+                      transitionDuration: "500ms",
                     }}
                   />
                   <button
